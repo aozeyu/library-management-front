@@ -87,6 +87,24 @@
         >
         </el-switch>
       </el-form-item>
+      <el-form-item
+        label="角色"
+        prop="roles"
+      >
+        <el-select
+          v-model="dataForm.roles"
+          multiple
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in roles"
+            :key="item.value"
+            :label="item.name"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
     </el-form>
     <span
       slot="footer"
@@ -102,6 +120,7 @@
 </template>
 
 <script>
+import role from '@/store/modules/system/role'
 export default {
   data () {
     return {
@@ -122,7 +141,8 @@ export default {
         phone: '',
         email: '',
         admin: 0,
-        enabled: 1
+        enabled: 1,
+        roles: []
       },
       dataRule: {
         username: [
@@ -137,10 +157,14 @@ export default {
         phone: [
           { required: true, message: '手机号码不能为空', trigger: 'blur' }
         ],
-        email: [
-          { required: false, message: '邮箱不能为空', trigger: 'blur' }
+        roles: [
+          { required: true, message: '角色不能为空', trigger: 'blur' }
+        ],
+        enabled: [
+          { required: true, message: '帐号状态不能为空', trigger: 'blur' }
         ]
-      }
+      },
+      roles: []
     }
   },
   methods: {
@@ -162,11 +186,23 @@ export default {
               this.dataForm.password = resp.password
               this.dataForm.admin = resp.admin
               this.dataForm.enabled = resp.enabled
+              this.dataForm.roles = resp.roles
             }
           })
         }
       })
     },
+
+    getRoles () {
+      this.$nextTick(() => {
+        this.$store.dispatch('role/list', { current: 1, size: 100 }).then((resp) => {
+          if (resp && resp.code === 200) {
+            this.roles = resp.data.records
+          }
+        })
+      })
+    },
+
     // 表单提交
     dataFormSubmit () {
       this.$refs['dataForm'].validate((valid) => {
@@ -180,13 +216,14 @@ export default {
             'phone': this.dataForm.phone,
             'email': this.dataForm.email,
             'enabled': this.dataForm.enabled,
+            'roles': this.dataForm.roles,
             'method': this.dataForm.id ? 'put' : 'post'
           }).then((resp) => {
             if (resp && resp.code === 200) {
               this.$message({
                 message: '操作成功',
                 type: 'success',
-                duration: 1500,
+                duration: 1000,
                 onClose: () => {
                   this.visible = false
                   this.$emit('refreshDataList')

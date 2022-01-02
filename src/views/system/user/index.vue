@@ -40,13 +40,6 @@
       >
       </el-table-column>
       <el-table-column
-        prop="id"
-        header-align="center"
-        align="center"
-        label="id"
-      >
-      </el-table-column>
-      <el-table-column
         prop="username"
         header-align="center"
         align="center"
@@ -66,13 +59,26 @@
         align="center"
         label="头像"
       >
+        <template slot-scope="scope">
+          <el-image
+            style="width: 80px; height: 80px"
+            :src="scope.row.avatar"
+            fit="contain"
+          ></el-image>
+        </template>
       </el-table-column>
       <el-table-column
         prop="gender"
         header-align="center"
         align="center"
-        label="性别 0-女 1-男"
+        label="性别"
       >
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.gender === 1 ? 'primary' : 'danger'"
+            disable-transitions
+          >{{scope.row.gender === 1 ? '男' : '女'}}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="phone"
@@ -89,25 +95,30 @@
       >
       </el-table-column>
       <el-table-column
-        prop="password"
-        header-align="center"
-        align="center"
-        label="密码"
-      >
-      </el-table-column>
-      <el-table-column
         prop="admin"
         header-align="center"
         align="center"
-        label="admin账号 0-否 1-是"
+        label="admin账号"
       >
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.admin === 1 ? 'primary' : 'danger'"
+            disable-transitions
+          >{{scope.row.admin === 1 ? '是' : '否'}}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="enabled"
         header-align="center"
         align="center"
-        label="帐号状态 0-禁用 1-启用"
+        label="帐号状态"
       >
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.enabled === 1 ? 'primary' : 'danger'"
+            disable-transitions
+          >{{scope.row.enabled === 1 ? '启用' : '禁用'}}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -155,7 +166,7 @@ export default {
   data () {
     return {
       dataForm: {
-        key: ''
+        key: null
       },
       dataList: [],
       pageIndex: 1,
@@ -210,6 +221,7 @@ export default {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id)
+        this.$refs.addOrUpdate.getRoles()
       })
     },
     // 删除
@@ -243,3 +255,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.mod-config {
+  margin: 20px;
+}
+</style>

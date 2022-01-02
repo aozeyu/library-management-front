@@ -1,4 +1,4 @@
-import { buildMenu, buildTree, getChildren } from '@/api/system/menu'
+import { buildMenu, buildTree, getChildren, getMenuByRoleId } from '@/api/system/menu'
 
 const getDefaultState = () => {
   return {
@@ -41,6 +41,14 @@ const actions = {
   getChildren ({ }, pid) {
     return new Promise((resolve) => {
       getChildren(pid).then(resp => {
+        resolve(resp)
+      })
+    })
+  },
+
+  getMenuByRoleId ({ }, roleId) {
+    return new Promise((resolve) => {
+      getMenuByRoleId(roleId).then(resp => {
         resolve(resp)
       })
     })

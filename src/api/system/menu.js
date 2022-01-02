@@ -22,3 +22,10 @@ export function getChildren (pid) {
     params: { pid: pid }
   })
 }
+
+export function getMenuByRoleId (roleId) {
+  return request({
+    url: '/menu/getMenuByRoleId/' + roleId,
+    method: 'get'
+  })
+}

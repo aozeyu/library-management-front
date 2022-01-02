@@ -117,7 +117,7 @@ export default {
   data () {
     return {
       dataForm: {
-        key: ''
+        key: null
       },
       dataList: [],
       dataListLoading: false,
@@ -196,3 +196,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.mod-config {
+  margin: 20px;
+}
+</style>

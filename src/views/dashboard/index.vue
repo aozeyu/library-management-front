@@ -1,6 +1,16 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">nickName: {{ nickName }}</div>
+    <div class="dashboard-text">nickName: {{ nickName }}</div><br>
+    <div class="dashboard-text">permissions:
+      <ul>
+        <li
+          v-for="p in permissions"
+          :key="p"
+        >
+          {{ p }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -11,7 +21,8 @@ export default {
   name: 'Dashboard',
   computed: {
     ...mapGetters([
-      'nickName'
+      'nickName',
+      "permissions"
     ])
   }
 }
