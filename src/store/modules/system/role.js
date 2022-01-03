@@ -1,4 +1,4 @@
-import { getRoleList, getById, saveOrupdate, saveOrUpdateMenuByRoleId } from "@/api/system/role"
+import { getRoleList, getById, saveOrupdate, saveOrUpdateMenuByRoleId, delByIds } from "@/api/system/role"
 
 
 const getDefaultState = () => {
@@ -46,6 +46,14 @@ const actions = {
     saveOrUpdateMenuByRoleId ({ }, { roleId, menuIds }) {
         return new Promise((resolve) => {
             saveOrUpdateMenuByRoleId(roleId, menuIds).then(resp => {
+                resolve(resp)
+            })
+        })
+    },
+
+    delByIds ({ }, ids) {
+        return new Promise((resolve) => {
+            delByIds(ids).then(resp => {
                 resolve(resp)
             })
         })

@@ -8,7 +8,7 @@
       <el-form-item>
         <el-input
           v-model="dataForm.key"
-          placeholder="参数名"
+          placeholder="用户名称"
           clearable
         ></el-input>
       </el-form-item>
@@ -17,11 +17,13 @@
         <el-button
           type="primary"
           @click="addOrUpdateHandle()"
+          v-permission="['user:add']"
         >新增</el-button>
         <el-button
           type="danger"
           @click="deleteHandle()"
           :disabled="dataListSelections.length <= 0"
+          v-permission="['user:del']"
         >批量删除</el-button>
       </el-form-item>
     </el-form>
@@ -95,19 +97,6 @@
       >
       </el-table-column>
       <el-table-column
-        prop="admin"
-        header-align="center"
-        align="center"
-        label="admin账号"
-      >
-        <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.admin === 1 ? 'primary' : 'danger'"
-            disable-transitions
-          >{{scope.row.admin === 1 ? '是' : '否'}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
         prop="enabled"
         header-align="center"
         align="center"
@@ -132,11 +121,13 @@
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.id)"
+            v-permission="['user:edit']"
           >修改</el-button>
           <el-button
             type="text"
             size="small"
             @click="deleteHandle(scope.row.id)"
+            v-permission="['user:del']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -162,6 +153,7 @@
 
 <script>
 import AddOrUpdate from './user-add-or-update'
+
 export default {
   data () {
     return {
@@ -183,6 +175,7 @@ export default {
   mounted () {
     this.getDataList()
   },
+
   methods: {
     // 获取数据列表
     getDataList () {

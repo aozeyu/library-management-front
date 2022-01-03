@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import getIds from '@/utils/idUtil';
 
 export function getRoleList (page, size, key) {
     return request({
@@ -28,5 +29,12 @@ export function saveOrUpdateMenuByRoleId (roleId, menuIds) {
         url: '/role/saveOrUpdateMenuByRoleId/' + roleId,
         method: 'post',
         data: menuIds
+    })
+}
+
+export function delByIds (ids) {
+    return request({
+        url: '/role?idList=' + getIds(ids),
+        method: 'delete'
     })
 }

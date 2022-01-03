@@ -8,7 +8,7 @@
       <el-form-item>
         <el-input
           v-model="dataForm.key"
-          placeholder="参数名"
+          placeholder="角色名称"
           clearable
         ></el-input>
       </el-form-item>
@@ -17,11 +17,13 @@
         <el-button
           type="primary"
           @click="addOrUpdateHandle()"
+          v-permission="['role:add']"
         >新增</el-button>
         <el-button
           type="danger"
           @click="deleteHandle()"
           :disabled="dataListSelections.length <= 0"
+          v-permission="['role:del']"
         >批量删除</el-button>
       </el-form-item>
     </el-form>
@@ -70,11 +72,13 @@
                   type="text"
                   size="small"
                   @click="addOrUpdateHandle(scope.row.id)"
+                  v-permission="['role:edit']"
                 >修改</el-button>
                 <el-button
                   type="text"
                   size="small"
                   @click="deleteHandle(scope.row.id)"
+                  v-permission="['role:del']"
                 >删除</el-button>
               </template>
             </el-table-column>
@@ -110,6 +114,7 @@
               icon="el-icon-check"
               size="mini"
               @click="saveOrUpdateMenuByRoleId"
+              v-permission="['role:edit']"
             >保存</el-button>
           </div>
           <div class="text item">
@@ -309,9 +314,10 @@ export default {
       if (!this.currentRoleId) {
         this.$message.error('请先选择角色')
       } else {
-        console.log('this.checkedKeys :>> ', this.checkedKeys);
         this.$store.dispatch('role/saveOrUpdateMenuByRoleId', { roleId: this.currentRoleId, menuIds: this.checkedKeys }).then((resp) => {
           if (resp && resp.code === 200) {
+            // 重新加载权限
+            this.$store.dispatch('user/getInfo')
             this.$message({
               message: '操作成功',
               type: 'success',
