@@ -98,7 +98,7 @@
         >
           <el-option
             v-for="item in roles"
-            :key="item.value"
+            :key="item.id"
             :label="item.name"
             :value="item.id"
           >
