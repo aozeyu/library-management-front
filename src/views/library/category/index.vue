@@ -1,192 +1,147 @@
 <template>
   <div class="mod-config">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+    <el-form
+      :inline="true"
+      :model="dataForm"
+      @keyup.enter.native="getDataList()"
+    >
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button  type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button  type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button @click="getDataList()">刷新</el-button>
+        <el-button
+          type="primary"
+          @click="addOrUpdateHandle(undefined, 'add')"
+          v-permission="['bookCategory:add']"
+        >新增</el-button>
       </el-form-item>
     </el-form>
     <el-table
       :data="dataList"
       border
       v-loading="dataListLoading"
-      @selection-change="selectionChangeHandle"
-      style="width: 100%;">
-      <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50">
-      </el-table-column>
-      <el-table-column
-        prop="id"
-        header-align="center"
-        align="center"
-        label="">
-      </el-table-column>
-      <el-table-column
-        prop="parentId"
-        header-align="center"
-        align="center"
-        label="上级分类id">
-      </el-table-column>
+      ref="department"
+      style="width: 100%;"
+      row-key="id"
+    >
       <el-table-column
         prop="categoryName"
         header-align="center"
-        align="center"
-        label="分类名称">
+        label="分类名称"
+      >
       </el-table-column>
       <el-table-column
         prop="categoryCode"
         header-align="center"
         align="center"
-        label="分类编码">
+        label="分类编码"
+      >
       </el-table-column>
       <el-table-column
         prop="seq"
         header-align="center"
         align="center"
-        label="同一层级分类排序排序">
-      </el-table-column>
-      <el-table-column
-        prop="deleted"
-        header-align="center"
-        align="center"
-        label="0-未删 1-已删">
-      </el-table-column>
-      <el-table-column
-        prop="createBy"
-        header-align="center"
-        align="center"
-        label="创建人">
-      </el-table-column>
-      <el-table-column
-        prop="createTime"
-        header-align="center"
-        align="center"
-        label="创建时间">
-      </el-table-column>
-      <el-table-column
-        prop="updateBy"
-        header-align="center"
-        align="center"
-        label="更新人">
-      </el-table-column>
-      <el-table-column
-        prop="updateTime"
-        header-align="center"
-        align="center"
-        label="修改时间">
+        label="同一层级分类排序排序"
+      >
       </el-table-column>
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="150"
-        label="操作">
+        label="操作"
+      >
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="addOrUpdateHandle(scope.row.id, 'add')"
+            v-permission="['bookCategory:add']"
+          >新增
+          </el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="addOrUpdateHandle(scope.row.id, 'update')"
+            v-permission="['bookCategory:edit']"
+          >修改</el-button>
+          <el-button
+            type="text"
+            size="small"
+            :disabled="scope.row.children && scope.row.children.length > 0"
+            @click="deleteHandle(scope.row.id, scope.row.categoryName)"
+            v-permission="['bookCategory:del']"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
-      :current-page="pageIndex"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="pageSize"
-      :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update
+      v-if="addOrUpdateVisible"
+      ref="addOrUpdate"
+      @refreshDataList="getDataList"
+    ></add-or-update>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './bookcategory-add-or-update'
-  export default {
-    data () {
-      return {
-        dataForm: {
-          key: ''
-        },
-        dataList: [],
-        pageIndex: 1,
-        pageSize: 10,
-        totalPage: 0,
-        dataListLoading: false,
-        dataListSelections: [],
-        addOrUpdateVisible: false
-      }
-    },
-    components: {
-      AddOrUpdate
-    },
-    activated () {
-      this.getDataList()
-    },
-    methods: {
-      // 获取数据列表
-      getDataList () {
-        this.dataListLoading = true
-        this.$store.dispatch('bookcategory/list', { current: this.pageIndex, size: this.pageSize, key: this.dataForm.key }).then((resp) => {
+import AddOrUpdate from './bookcategory-add-or-update'
+import { buildCategoryTree, delByIds } from '@/api/library/category'
+export default {
+  data () {
+    return {
+      dataForm: {
+        key: ''
+      },
+      dataList: [],
+      dataListLoading: false,
+      dataListSelections: [],
+      addOrUpdateVisible: false
+    }
+  },
+  components: {
+    AddOrUpdate
+  },
+  mounted () {
+    this.getDataList()
+  },
+  methods: {
+    // 获取数据列表
+    getDataList () {
+      this.dataListLoading = true
+      new Promise(() => {
+        buildCategoryTree(this.dataForm.key).then(resp => {
           if (resp && resp.code === 200) {
-            const data = resp.data
-            this.dataList = data.records
-            this.totalPage = data.total
+            this.dataList = resp.data
           } else {
             this.dataList = []
-            this.totalPage = 0
           }
           this.dataListLoading = false
-        }).catch(() => {
-          this.dataListLoading = false
         })
-      },
-      // 每页数
-      sizeChangeHandle (val) {
-        this.pageSize = val
-        this.pageIndex = 1
-        this.getDataList()
-      },
-      // 当前页
-      currentChangeHandle (val) {
-        this.pageIndex = val
-        this.getDataList()
-      },
-      // 多选
-      selectionChangeHandle (val) {
-        this.dataListSelections = val
-      },
-      // 新增 / 修改
-      addOrUpdateHandle (id) {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
-        })
-      },
-      // 删除
-      deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.id
-        })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$store.dispatch('bookcategory/delByIds', ids).then((resp) => {
+      })
+    },
+    // 新增 / 修改
+    addOrUpdateHandle (id, action) {
+      this.addOrUpdateVisible = true
+      this.$nextTick(() => {
+        this.$refs.addOrUpdate.init(id, action)
+      })
+    },
+    // 删除
+    deleteHandle (id, categoryName) {
+      var ids = id ? [id] : this.dataListSelections.map(item => {
+        return item.id
+      })
+      this.$confirm(`确定对[${categoryName}]分类进行删除操作?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        new Promise(() => {
+          delByIds(ids).then(resp => {
             if (resp && resp.code === 200) {
               this.$message({
                 message: '操作成功',
                 type: 'success',
-                duration: 1500,
+                duration: 1000,
                 onClose: () => {
                   this.getDataList()
                 }
@@ -195,12 +150,13 @@
               this.$message.error(data.msg)
             }
           })
-        }).catch(() => {
-
         })
-      }
+      }).catch(() => {
+
+      })
     }
   }
+}
 </script>
 <style scoped>
 .mod-config {

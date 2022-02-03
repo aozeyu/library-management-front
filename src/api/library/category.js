@@ -9,6 +9,14 @@ export function list ({ current, size, key }) {
     })
 }
 
+export function buildCategoryTree (key) {
+    return request({
+        url: '/bookCategory/buildCategoryTree',
+        method: 'get',
+        params: { categoryName: key }
+    })
+}
+
 export function delByIds (ids) {
     return request({
         url: '/bookCategory?idList=' + getIds(ids),
@@ -27,6 +35,13 @@ export function saveOrUpdate (data) {
 export function getById (id) {
     return request({
         url: '/bookCategory/' + id,
+        method: 'get'
+    })
+}
+
+export function load (id) {
+    return request({
+        url: 'bookCategory/load?parentId=' + id,
         method: 'get'
     })
 }

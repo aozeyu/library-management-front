@@ -17,11 +17,13 @@
         <el-button
           type="primary"
           @click="addOrUpdateHandle()"
+          v-permission="['book:add']"
         >新增</el-button>
         <el-button
           type="danger"
           @click="deleteHandle()"
           :disabled="dataListSelections.length <= 0"
+          v-permission="['book:del']"
         >批量删除</el-button>
       </el-form-item>
     </el-form>
@@ -82,7 +84,10 @@
         label="出版年份"
       >
         <template slot-scope="scope">
-          <el-tag el-tag type="info">{{scope.row.publicationYear}}</el-tag>
+          <el-tag
+            el-tag
+            type="info"
+          >{{scope.row.publicationYear}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -109,10 +114,22 @@
         label="页数"
       >
         <template slot-scope="scope">
-          <el-tag el-tag type="danger">{{scope.row.pages}} 页</el-tag>
+          <el-tag
+            el-tag
+            type="danger"
+          >{{scope.row.pages}} 页</el-tag>
         </template>
       </el-table-column>
-
+      <el-table-column
+        prop="stock"
+        header-align="center"
+        align="center"
+        label="库存"
+      >
+        <template slot-scope="scope">
+          {{scope.row.stock === 0 ? '无库存' : scope.row.stock}}
+        </template>
+      </el-table-column>
       <el-table-column
         fixed="right"
         header-align="center"
@@ -125,11 +142,13 @@
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.id)"
+            v-permission="['book:edit']"
           >修改</el-button>
           <el-button
             type="text"
             size="small"
-            @click="deleteHandle(scope.row.id)"
+            @click="deleteHandle(scope.row.id, scope.row.bookName)"
+            v-permission="['book:del']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -155,7 +174,7 @@
 
 <script>
 import AddOrUpdate from './book-add-or-update'
-import {list, delByIds} from '@/api/library/book'
+import { list, delByIds } from '@/api/library/book'
 export default {
   data () {
     return {
@@ -215,29 +234,32 @@ export default {
       })
     },
     // 删除
-    deleteHandle (id) {
+    deleteHandle (id, bookName) {
+      var bookNames = bookName ? [bookName] : this.dataListSelections.map(item => {
+        return item.bookName
+      })
       var ids = id ? [id] : this.dataListSelections.map(item => {
         return item.id
       })
-      this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对[书名为${bookNames.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         new Promise(() => {
           delByIds(ids).then((resp) => {
-          if (resp && resp.code === 200) {
-            this.$message({
-              message: '操作成功',
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.getDataList()
-              }
-            })
-          } else {
-            this.$message.error(data.msg)
-          }
+            if (resp && resp.code === 200) {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.getDataList()
+                }
+              })
+            } else {
+              this.$message.error(data.msg)
+            }
           })
         })
       }).catch(() => {

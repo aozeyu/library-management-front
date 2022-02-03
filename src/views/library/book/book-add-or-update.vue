@@ -55,7 +55,8 @@
           v-model="dataForm.publicationYear"
           type="year"
           value-format="yyyy"
-          placeholder="选择出版年份">
+          placeholder="选择出版年份"
+        >
         </el-date-picker>
       </el-form-item>
       <el-form-item
@@ -96,6 +97,15 @@
           placeholder="图片"
         ></el-input>
       </el-form-item>
+      <el-form-item
+        label="库存"
+        prop="stock"
+      >
+        <el-input
+          v-model="dataForm.stock"
+          placeholder="图片"
+        ></el-input>
+      </el-form-item>
     </el-form>
     <span
       slot="footer"
@@ -127,7 +137,8 @@ export default {
         isbn: '',
         price: '',
         pages: '',
-        image: ''
+        image: '',
+        stock: ''
       },
       bookCategorys: [],
       dataRule: {
@@ -154,6 +165,9 @@ export default {
         ],
         image: [
           { required: true, message: '图片不能为空', trigger: 'blur' }
+        ],
+        stock: [
+          { required: true, message: '库存不能为空', trigger: 'blur' }
         ]
       }
     }
@@ -177,6 +191,7 @@ export default {
                 this.dataForm.price = resp.price
                 this.dataForm.pages = resp.pages
                 this.dataForm.image = resp.image
+                this.dataForm.stock = resp.stock
               }
             })
           })
@@ -210,7 +225,8 @@ export default {
               'isbn': this.dataForm.isbn,
               'price': this.dataForm.price,
               'pages': this.dataForm.pages,
-              'image': this.dataForm.image
+              'image': this.dataForm.image,
+              'stock': this.dataForm.stock
             }).then(resp => {
               if (resp && resp.code === 200) {
                 this.$message({

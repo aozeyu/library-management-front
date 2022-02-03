@@ -121,12 +121,14 @@
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.id)"
+            :disabled="scope.row.username === 'admin'"
             v-permission="['user:edit']"
           >修改</el-button>
           <el-button
             type="text"
             size="small"
-            @click="deleteHandle(scope.row.id)"
+            @click="deleteHandle(scope.row.id, scope.row.username)"
+            :disabled="scope.row.username === 'admin'"
             v-permission="['user:del']"
           >删除</el-button>
         </template>
@@ -218,11 +220,24 @@ export default {
       })
     },
     // 删除
-    deleteHandle (id) {
-      var ids = id ? [id] : this.dataListSelections.map(item => {
+    deleteHandle (id, username) {
+      var usernames = username ? [username] : this.dataListSelections.filter(item => {
+        if (item.username === 'admin') {
+          return false
+        }
+        return true
+      }).map(item => {
+        return item.username
+      })
+      var ids = id ? [id] : this.dataListSelections.filter(item => {
+        if (item.username === 'admin') {
+          return false
+        }
+        return true
+      }).map(item => {
         return item.id
       })
-      this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对用户为[${usernames.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

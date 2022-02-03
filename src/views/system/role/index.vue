@@ -77,7 +77,7 @@
                 <el-button
                   type="text"
                   size="small"
-                  @click="deleteHandle(scope.row.id)"
+                  @click="deleteHandle(scope.row.id, scope.row.name)"
                   v-permission="['role:del']"
                 >删除</el-button>
               </template>
@@ -211,11 +211,14 @@ export default {
       })
     },
     // 删除
-    deleteHandle (id) {
+    deleteHandle (id, name) {
+      var names = name ? [name] : this.dataListSelections.map(item => {
+        return item.name
+      })
       var ids = id ? [id] : this.dataListSelections.map(item => {
         return item.id
       })
-      this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+      this.$confirm(`确定对名称为[${names.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

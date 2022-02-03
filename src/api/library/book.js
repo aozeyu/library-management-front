@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 import getIds from '@/utils/idUtil'
 
-export function list ({ current, size, key }) {
+export function list ({ current, size, key, categoryId }) {
     return request({
         url: '/book',
         method: 'get',
-        params: { current: current, size: size, bookName: key }
+        params: { current: current, size: size, bookName: key, bookCategoryId: categoryId }
     })
 }
 
