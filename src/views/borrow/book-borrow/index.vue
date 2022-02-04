@@ -228,6 +228,7 @@ export default {
                 type: 'success',
                 message: '借阅成功!'
               })
+              this.getDataList()
             }
           })
         })

@@ -17,6 +17,9 @@ import '@/permission' // permission control
 // 权限指令
 import permission from '@/components/Permission'
 
+import * as echarts from 'echarts'
+Vue.prototype.$echarts = echarts
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
