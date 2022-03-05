@@ -8,7 +8,7 @@
       <el-form-item>
         <el-input
           v-model="dataForm.key"
-          placeholder="参数名"
+          placeholder="书名"
           clearable
         ></el-input>
       </el-form-item>

@@ -8,7 +8,7 @@
       <el-form-item>
         <el-input
           v-model="dataForm.key"
-          placeholder="参数名"
+          placeholder="书名"
           clearable
         ></el-input>
       </el-form-item>
@@ -61,7 +61,7 @@
         prop="status"
         header-align="center"
         align="center"
-        label="状态 0-审批中 1-同意续借 2-拒绝续借"
+        label="审批状态"
       >
         <template slot-scope="scope">
           <el-tag
