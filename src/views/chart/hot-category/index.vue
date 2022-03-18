@@ -29,7 +29,10 @@ export default {
             // 绘制图表
             myChart.setOption({
               legend: {
-                top: 'bottom'
+                left: 'left',
+                textStyle: {
+                  fontSize: 25
+                }
               },
               toolbox: {
                 show: true,
@@ -49,6 +52,17 @@ export default {
                   roseType: 'area',
                   itemStyle: {
                     borderRadius: 8
+                  },
+                  label: {
+                    normal: {
+                      show: true,
+                      textStyle: {
+                        fontSize: 25
+                      }
+                    },
+                    emphasis: {
+                      show: true
+                    }
                   },
                   data: data
                 }

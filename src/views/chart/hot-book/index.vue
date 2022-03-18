@@ -54,7 +54,7 @@ export default {
               ],
               xAxis: {
                 type: 'category',
-                axisLabel: { interval: 0, rotate: 30 }
+                axisLabel: { interval: 0, rotate: 30, fontSize: 20 }
               },
               yAxis: {
                 minInterval: 1
@@ -72,7 +72,22 @@ export default {
                     }
                   },
                 },
-              }
+                label: {
+                  normal: {
+                    show: true,
+                    textStyle: {
+                      fontSize: 25
+                    }
+                  },
+                  emphasis: {
+                    show: true
+                  }
+                },
+              },
+              grid: {
+                left: '10%',
+                bottom: '35%'
+              },
             })
           }
         })
@@ -88,7 +103,7 @@ export default {
 <style scoped>
 .mod-config {
   margin: 0 auto;
-  width: 1200px;
+  width: 1000px;
   height: 1200px;
 }
 </style>
