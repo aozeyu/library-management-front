@@ -18,13 +18,13 @@
           type="primary"
           @click="addOrUpdateHandle()"
           v-permission="['book:add']"
-        >新增</el-button>
+        >上架</el-button>
         <el-button
           type="danger"
           @click="deleteHandle()"
           :disabled="dataListSelections.length <= 0"
           v-permission="['book:del']"
-        >批量删除</el-button>
+        >批量下架</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -149,7 +149,7 @@
             size="small"
             @click="deleteHandle(scope.row.id, scope.row.bookName)"
             v-permission="['book:del']"
-          >删除</el-button>
+          >下架</el-button>
         </template>
       </el-table-column>
     </el-table>
