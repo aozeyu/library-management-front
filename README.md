@@ -12,6 +12,7 @@
 1. npm install
 2. npm run dev
 3. 用浏览器打开http://localhost:9528
+4. 默认超级管理员账号密码admin/admin
 
 对应后端项目地址：https://github.com/WangXin3/library-management-
 
